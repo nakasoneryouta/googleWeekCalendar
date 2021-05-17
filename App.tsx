@@ -4,7 +4,7 @@
 
     export default function App() {
 
-    const times = ['10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00']
+    const times = ['10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00']
     const date= [0]
     for (let index = 1; index <= 200; index++) {
         date.push(index)
@@ -17,6 +17,7 @@
     }) => {
     if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
         setIndex(info.viewableItems[0].item.id);
+        console.log("========",info.viewableItems[0].item.id)
     }
     };
 
@@ -64,31 +65,6 @@
                     style={styles.dateFlatList}
                     numColumns={7}
                     keyExtractor={(_,index) => `${index}`}
-                    // ListHeaderComponent={() => {
-                    //     return (
-                    //         <View>
-                    //             <View style={styles.weekContainer}>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>日</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>月</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>火</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>水</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>木</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>金</Text></View>
-                    //                 <View style={styles.weekTextContainer}><Text style={styles.weekText}>土</Text></View>
-                    //             </View>
-                    //             <View style={styles.dateContainer}>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>1</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>2</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>3</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>4</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>5</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>6</Text></View>
-                    //                 <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>7</Text></View>
-                    //             </View>
-                    //         </View>
-                    //     )
-                    // }}
-                    // stickyHeaderIndices={[0]}
                     renderItem={(item) => {
                     return (
                         <View style={[styles.grid,{backgroundColor: color}]}>
@@ -156,6 +132,7 @@
                     decelerationRate={0.6}
                     horizontal
                     initialScrollIndex={4}
+                    scrollEventThrottle={1}
                     onScrollEndDrag={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
@@ -169,7 +146,7 @@
     }
 
     const DATE_WIDTH = Dimensions.get('screen').width * 308 / 375;
-    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 296) / 375;
+    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 295) / 375;
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
     const GRID_WIDTH = Dimensions.get('screen').width * 44 / 375
