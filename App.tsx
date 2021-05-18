@@ -54,7 +54,7 @@
                     ref={dateRef}
                     data={grid}
                     style={styles.dateFlatList}
-                    numColumns={28}
+                    numColumns={7*4}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
@@ -79,8 +79,7 @@
     //初期カレンダーのView
     const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
-        // もし末端にたどり着いたら末端に＋４
-        // gridRef.current?.scrollToIndex({ animated: false, index: 0 })
+        console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))
     }
 
     return (
