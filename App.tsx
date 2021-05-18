@@ -33,7 +33,7 @@
     },
     ]);
 
-    const horizontalFlatlistRef = React.useRef<FlatList>(null);
+    const gridRef = React.useRef<FlatList>(null);
     const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
 
@@ -58,7 +58,7 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScroll={(e) => {
-                        dateRef.current?.scrollToOffset({
+                        timeRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
@@ -79,6 +79,7 @@
     const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
         // もし末端にたどり着いたら末端に＋４
+        // gridRef.current?.scrollToIndex({ animated: false, index: 0 })
     }
 
     return (
@@ -91,7 +92,14 @@
                     ref={timeRef}
                     data={times}
                     style = {styles.timeContainer}
-                    keyExtractor={(_,index) => `${index}`}
+                    keyExtractor={(_, index) => `${index}`}
+                    scrollEventThrottle={1}
+                    onScroll={(e) => {
+                        dateRef.current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                    }}
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -102,7 +110,7 @@
                 {/* スケジュールのグリッド */}
                 <FlatList
                     data={views}
-                    ref = {horizontalFlatlistRef}
+                    ref = {gridRef}
                     snapToInterval={DATE_WIDTH}
                     viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     decelerationRate={0.6}
