@@ -4,10 +4,11 @@
 
     export default function App() {
 
-    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45',,'12:00','13:15','13:30','13:45',]
-    const date= [0]
-    for (let index = 1; index <= 160; index++) {
-        date.push(index)
+    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','12:00','13:15','13:30',]
+    const date = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
+    const grid= [0]
+    for (let index = 1; index <= 600; index++) {
+        grid.push(index)
     }
 
     const [index, setIndex] = React.useState(0)
@@ -36,43 +37,27 @@
     const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
 
+
     const dateFlatList = (color? : string) => {
         return (
             <View>
 
-                <View>
-                    <View style={styles.weekContainer}>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>日</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>月</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>火</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>水</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>木</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>金</Text></View>
-                        <View style={styles.weekTextContainer}><Text style={styles.weekText}>土</Text></View>
-                    </View>
-                    <View style={styles.dateContainer}>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>1</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>2</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>3</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>4</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>5</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>6</Text></View>
-                        <View style = {styles.dateTextContainer}><Text style = {styles.dateText}>7</Text></View>
-                    </View>
+                {/* 日付 */}
+                <View style={styles.dateContainer}>
+                    {date.map((item) => {
+                        return (
+                            <View style={styles.dateTextContainer}><Text style={styles.dateText}>{item}</Text></View>
+                        )
+                    })}
                 </View>
-                
                 <FlatList
                     ref={dateRef}
-                    data={date}
+                    data={grid}
                     style={styles.dateFlatList}
-                    numColumns={7}
+                    numColumns={28}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScroll={(e) => {
-                        timeRef.current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
                         dateRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
@@ -91,31 +76,9 @@
     }
 
     //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0},{element: dateFlatList(),id: 1},{element: dateFlatList(),id: 2},{element: dateFlatList('green'),id: 3},{element: dateFlatList('white'),id: 4},{element: dateFlatList(),id: 5},{element: dateFlatList(),id: 6},{element: dateFlatList(),id: 7},{element: dateFlatList(),id: 8}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
         // もし末端にたどり着いたら末端に＋４
-        if (index == views[views.length - 2].id) {
-            console.log("=====ここが末端です")
-            const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.push({ element: dateFlatList(), id: views[views.length - 1].id + 1 }, { element: dateFlatList(), id: views[views.length - 1].id + 2 }, { element: dateFlatList(), id: views[views.length - 1].id + 3 }, { element: dateFlatList(), id: views[views.length - 1].id + 4 })
-            newViews.shift()
-            newViews.shift()
-            newViews.shift()
-            newViews.shift()
-            horizontalFlatlistRef.current?.scrollToIndex({ animated: false, index: 4 })
-            setViews(newViews)
-
-        } else if (index == views[0].id) {
-            console.log("=====ここが先頭です")
-            const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.unshift({ element: dateFlatList(), id: views[0].id - 1 }, { element: dateFlatList(), id: views[1].id - 1 }, { element: dateFlatList(), id: views[2].id - 1 }, { element: dateFlatList(), id: views[3].id - 1 });
-            newViews.pop();
-            newViews.pop();
-            newViews.pop();
-            newViews.pop();
-            horizontalFlatlistRef.current?.scrollToIndex({ animated: false, index: 4 })
-            setViews(newViews)
-        }
     }
 
     return (
@@ -138,13 +101,12 @@
 
                 {/* スケジュールのグリッド */}
                 <FlatList
+                    data={views}
                     ref = {horizontalFlatlistRef}
                     snapToInterval={DATE_WIDTH}
                     viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
-                    data={views}
                     decelerationRate={0.6}
                     horizontal
-                    initialScrollIndex={4}
                     onScrollEndDrag={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
@@ -190,7 +152,7 @@
         color: 'black',
     },
     dateFlatList: {
-        width: DATE_WIDTH,
+        width: DATE_WIDTH * 4,
         height: GRID_CONTAINER_HEIGHT,
         backgroundColor: 'yellow',
         borderWidth: 1,
@@ -200,7 +162,7 @@
         flexDirection: 'row',
     },
     timeContainer: {
-        marginTop: GRID_HEIGHT + WEEK_HEIGHT,
+        marginTop: GRID_HEIGHT,
         width: TIME_WIDTH,
         height: GRID_CONTAINER_HEIGHT,
         backgroundColor: 'green'
