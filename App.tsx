@@ -15,7 +15,13 @@
         changed: ViewToken[];
     }) => {
     if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
-        setIndex(info.viewableItems[0].item.id);
+        // if (info.changed[0].item == 2) {
+        //     console.log("末")
+        //     gridtRef.current?.scrollToIndex({ animated: false, index: 1 })
+        // } else if (nowIndex == 0) {
+        //     console.log("先")
+        //     gridtRef.current?.scrollToIndex({ animated: false, index: 1 })
+        // }
     }
     };
 
@@ -66,9 +72,7 @@
                     numColumns={7}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
-                    onLayout={(e) =>
-                        console.log()
-                    }
+                    onScrollToIndexFailed={() => console.log("error")}
                     onScroll={(e) => {
                         timeRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
@@ -86,6 +90,14 @@
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
+                        dateRef[3].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[4].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
                     }}
                     renderItem={(item) => {
                     return (
@@ -100,13 +112,24 @@
     }
 
     //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2}])
-    const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2},{element: dateFlatList(2),id: 3},{element: dateFlatList(2),id: 4}])
+    
+    const onMomentumScrollEnd = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
+        const nowIndex = Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH)
+
+        if (nowIndex == 4) {
+            console.log("最後です")
+            gridtRef.current?.scrollToIndex({ animated: false, index: 2 })
+        } else if (nowIndex == 1) {
+            console.log("最初です")
+            gridtRef.current?.scrollToIndex({ animated: false, index: 2 })
+        }
             // if(index == views[views.length - 1].id){
             //     console.log("=====ここが末端です")
             // }
-            console.log("id = ",views[views.length - 1].id)
-            console.log("index = ",index)
+            // if(views[views.length - 2].id == index){
+            //     console.log("末端")
+            // }
         // もし末端にたどり着いたら末端に＋４
         // if (index == views[views.length - 2].id) {
         //     console.log("=====ここが末端です")
@@ -143,9 +166,7 @@
                     data={times}
                     style = {styles.timeContainer}
                     keyExtractor={(_, index) => `${index}`}
-                    onLayout={(e) =>
-                        console.log()
-                    }
+                    onScrollToIndexFailed={() => console.log("error")}
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -162,10 +183,12 @@
                     decelerationRate={0.6}
                     horizontal
                     initialScrollIndex={1}
-                    onLayout={(e) =>
-                        console.log()
-                    }
-                    onScroll={(item) => onScrollEndDrag(item)}
+                    scrollEventThrottle={1500}
+                    onScrollToIndexFailed={() => console.log("error")}
+                    onScroll={(item) => console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))}
+                    snapToEnd={true}
+                    indicatorStyle={"black"}
+                    onMomentumScrollEnd = {(item) => onMomentumScrollEnd(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
                         return (<>{item.item.element}</>)
@@ -178,7 +201,7 @@
     }
 
     const DATE_WIDTH = Dimensions.get('screen').width * 308 / 375;
-    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 295) / 375;
+    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 290) / 375;
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
     const GRID_WIDTH = Dimensions.get('screen').width * 44 / 375
