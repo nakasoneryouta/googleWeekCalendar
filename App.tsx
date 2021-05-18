@@ -34,11 +34,13 @@
     // ]);
 
     const gridRef = React.useRef<FlatList>(null);
-    const dateRef = React.useRef<FlatList>(null);
+    // const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
+    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
+    
 
 
-    const dateFlatList = (color? : string) => {
+    const dateFlatList = (index: number,color? : string) => {
         return (
             <View>
 
@@ -51,7 +53,7 @@
                     })}
                 </View>
                 <FlatList
-                    ref={dateRef}
+                    ref={dateRef[index]}
                     data={grid}
                     style={styles.dateFlatList}
                     numColumns={7*4}
@@ -63,6 +65,12 @@
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
+                        for (let index = 0; index < 3; index++) {
+                            dateRef[index].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        }
                     }}
                     renderItem={(item) => {
                     return (
@@ -77,12 +85,12 @@
     }
 
     //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
         console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))
-        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 3){
-            console.log("末端")
-            gridRef.current?.scrollToIndex({ animated: false, index: 0 })
+        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 0){
+            // gridRef.current?.scrollToIndex({ animated: false, index: 0 })
+            console.log("先頭に到達しました")
         }
     }
 
@@ -99,12 +107,12 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll={(e) => {
-                        dateRef.current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                    }}
+                    // onScroll={(e) => {
+                    //     dateRef.current?.scrollToOffset({
+                    //         offset:e.nativeEvent.contentOffset.y,
+                    //         animated: false,
+                    //     });
+                    // }}
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -121,6 +129,7 @@
                     decelerationRate={0.6}
                     onScrollToIndexFailed={() => console.log("error")}
                     horizontal
+                    initialScrollIndex={1}
                     onMomentumScrollEnd={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
