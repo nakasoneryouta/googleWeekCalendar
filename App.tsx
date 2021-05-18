@@ -82,6 +82,7 @@
         console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))
         if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 3){
             console.log("末端")
+            gridRef.current?.scrollToIndex({ animated: false, index: 0 })
         }
     }
 
