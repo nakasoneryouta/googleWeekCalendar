@@ -9,36 +9,29 @@
         date.push(index)
     }
 
-    const [index, setIndex] = React.useState(0)
-    const handleViewableItemsChanged = (info: {
-        viewableItems: ViewToken[];
-        changed: ViewToken[];
-    }) => {
-    if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
-        // if (info.changed[0].item == 2) {
-        //     console.log("末")
-        //     gridtRef.current?.scrollToIndex({ animated: false, index: 1 })
-        // } else if (nowIndex == 0) {
-        //     console.log("先")
-        //     gridtRef.current?.scrollToIndex({ animated: false, index: 1 })
-        // }
-    }
-    };
+    // const [index, setIndex] = React.useState(0)
+    // const handleViewableItemsChanged = (info: {
+    //     viewableItems: ViewToken[];
+    //     changed: ViewToken[];
+    // }) => {
+    // if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
+    // }
+    // };
 
-    const viewabilityConfigCallbackPairs = React.useRef([
-    {
-        viewabilityConfig: {
-        minimumViewTime: 0,
-        viewAreaCoveragePercentThreshold: 0,
-        waitForInteraction: true,
-        },
-        onViewableItemsChanged: handleViewableItemsChanged,
-    },
-    ]);
+    // const viewabilityConfigCallbackPairs = React.useRef([
+    // {
+    //     viewabilityConfig: {
+    //     minimumViewTime: 0,
+    //     viewAreaCoveragePercentThreshold: 0,
+    //     waitForInteraction: true,
+    //     },
+    //     onViewableItemsChanged: handleViewableItemsChanged,
+    // },
+    // ]);
 
     const gridtRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
-    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
+    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
 
     const dateFlatList = (index: number,color? : string) => {
         return (
@@ -78,26 +71,12 @@
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
-                        dateRef[0].current?.scrollToOffset({
+                        for (let num = 0; num < 8; num++) {
+                            dateRef[num].current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
-                        dateRef[1].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        dateRef[2].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        dateRef[3].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        dateRef[4].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
+                        }
                     }}
                     renderItem={(item) => {
                     return (
@@ -112,26 +91,29 @@
     }
 
     //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2},{element: dateFlatList(2),id: 3},{element: dateFlatList(2),id: 4}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2},{element: dateFlatList(2),id: 3},{element: dateFlatList(2),id: 4},{element: dateFlatList(2),id: 5},{element: dateFlatList(2),id: 6},{element: dateFlatList(2),id: 7},{element: dateFlatList(2),id: 8}])
     
     const onMomentumScrollEnd = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
+        
+        // 画面幅から今のindexを取得
         const nowIndex = Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH)
 
-        if (nowIndex == 4) {
-            console.log("最後です")
-            gridtRef.current?.scrollToIndex({ animated: false, index: 2 })
-        } else if (nowIndex == 1) {
-            console.log("最初です")
-            gridtRef.current?.scrollToIndex({ animated: false, index: 2 })
-        }
-            // if(index == views[views.length - 1].id){
-            //     console.log("=====ここが末端です")
-            // }
-            // if(views[views.length - 2].id == index){
-            //     console.log("末端")
-            // }
+
         // もし末端にたどり着いたら末端に＋４
-        // if (index == views[views.length - 2].id) {
+        if (nowIndex == 8) {
+            // gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
+            // const newViews: {element: JSX.Element,id: number}[] = [...views];
+            // newViews.push({ element: dateFlatList(), id: views[views.length - 1].id + 1 }, { element: dateFlatList(), id: views[views.length - 1].id + 2 }, { element: dateFlatList(), id: views[views.length - 1].id + 3 }, { element: dateFlatList(), id: views[views.length - 1].id + 4 })
+            // newViews.shift()
+            // newViews.shift()
+            // newViews.shift()
+            // newViews.shift()
+            // setViews(newViews)
+        }
+        if (nowIndex == 0) {
+            gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
+        }
+        // if (nowIndex == 4) {
         //     console.log("=====ここが末端です")
         //     const newViews: {element: JSX.Element,id: number}[] = [...views];
         //     newViews.push({ element: dateFlatList(), id: views[views.length - 1].id + 1 }, { element: dateFlatList(), id: views[views.length - 1].id + 2 }, { element: dateFlatList(), id: views[views.length - 1].id + 3 }, { element: dateFlatList(), id: views[views.length - 1].id + 4 })
@@ -142,7 +124,7 @@
         //     gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
         //     setViews(newViews)
 
-        // } else if (index == views[0].id) {
+        // } else if (nowIndex == 0) {
         //     console.log("=====ここが先頭です")
         //     const newViews: {element: JSX.Element,id: number}[] = [...views];
         //     newViews.unshift({ element: dateFlatList(), id: views[0].id - 1 }, { element: dateFlatList(), id: views[1].id - 1 }, { element: dateFlatList(), id: views[2].id - 1 }, { element: dateFlatList(), id: views[3].id - 1 });
@@ -178,14 +160,13 @@
                 <FlatList
                     ref = {gridtRef}
                     snapToInterval={DATE_WIDTH}
-                    viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                    // viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     data={views}
                     decelerationRate={0.6}
                     horizontal
-                    initialScrollIndex={1}
+                    initialScrollIndex={4}
                     scrollEventThrottle={1500}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll={(item) => console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))}
                     snapToEnd={true}
                     indicatorStyle={"black"}
                     onMomentumScrollEnd = {(item) => onMomentumScrollEnd(item)}
