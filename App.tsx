@@ -11,27 +11,27 @@
         grid.push(index)
     }
 
-    const [index, setIndex] = React.useState(0)
-    const handleViewableItemsChanged = (info: {
-        viewableItems: ViewToken[];
-        changed: ViewToken[];
-    }) => {
-    if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
-        setIndex(info.viewableItems[0].item.id);
-        console.log("========",info.viewableItems[0].item.id)
-    }
-    };
+    // const [index, setIndex] = React.useState(0)
+    // const handleViewableItemsChanged = (info: {
+    //     viewableItems: ViewToken[];
+    //     changed: ViewToken[];
+    // }) => {
+    // if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
+    //     setIndex(info.viewableItems[0].item.id);
+    //     console.log("========",info.viewableItems[0].item.id)
+    // }
+    // };
 
-    const viewabilityConfigCallbackPairs = React.useRef([
-    {
-        viewabilityConfig: {
-        minimumViewTime: 0,
-        viewAreaCoveragePercentThreshold: 0,
-        waitForInteraction: true,
-        },
-        onViewableItemsChanged: handleViewableItemsChanged,
-    },
-    ]);
+    // const viewabilityConfigCallbackPairs = React.useRef([
+    // {
+    //     viewabilityConfig: {
+    //     minimumViewTime: 0,
+    //     viewAreaCoveragePercentThreshold: 0,
+    //     waitForInteraction: true,
+    //     },
+    //     onViewableItemsChanged: handleViewableItemsChanged,
+    // },
+    // ]);
 
     const gridRef = React.useRef<FlatList>(null);
     const dateRef = React.useRef<FlatList>(null);
@@ -80,6 +80,9 @@
     const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
         console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))
+        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 3){
+            console.log("末端")
+        }
     }
 
     return (
@@ -113,11 +116,11 @@
                     data={views}
                     ref = {gridRef}
                     snapToInterval={DATE_WIDTH}
-                    viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                    // viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     decelerationRate={0.6}
                     onScrollToIndexFailed={() => console.log("error")}
                     horizontal
-                    onScrollEndDrag={(item) => onScrollEndDrag(item)}
+                    onMomentumScrollEnd={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
                         return (<>{item.item.element}</>)
@@ -130,7 +133,7 @@
     }
 
     const DATE_WIDTH = Dimensions.get('screen').width * 308 / 375;
-    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 295) / 375;
+    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 290) / 375;
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
     const GRID_WIDTH = Dimensions.get('screen').width * 44 / 375
