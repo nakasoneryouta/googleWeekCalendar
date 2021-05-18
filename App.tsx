@@ -33,10 +33,10 @@
     ]);
 
     const gridtRef = React.useRef<FlatList>(null);
-    const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
+    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
 
-    const dateFlatList = (color? : string) => {
+    const dateFlatList = (index: number,color? : string) => {
         return (
             <View>
 
@@ -62,18 +62,53 @@
                 </View>
                 
                 <FlatList
-                    ref={dateRef}
+                    ref={dateRef[index]}
                     data={date}
                     style={styles.dateFlatList}
                     numColumns={7}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
+                    onLayout={(e) =>
+                        console.log()
+                    }
                     onScroll={(e) => {
                         timeRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
-                        dateRef.current?.scrollToOffset({
+                        dateRef[0].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[1].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[2].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[3].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[4].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[5].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[6].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[7].current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef[8].current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
                             animated: false,
                         });
@@ -91,28 +126,28 @@
     }
 
     //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(),id: 0},{element: dateFlatList(),id: 1},{element: dateFlatList(),id: 2},{element: dateFlatList('green'),id: 3},{element: dateFlatList('white'),id: 4},{element: dateFlatList(),id: 5},{element: dateFlatList(),id: 6},{element: dateFlatList(),id: 7},{element: dateFlatList(),id: 8}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2},{element: dateFlatList(3),id: 3},{element: dateFlatList(4),id: 4},{element: dateFlatList(5),id: 5},{element: dateFlatList(6),id: 6},{element: dateFlatList(7),id: 7},{element: dateFlatList(8),id: 8}])
     const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
         // もし末端にたどり着いたら末端に＋４
         if (index == views[views.length - 2].id) {
             console.log("=====ここが末端です")
             const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.push({ element: dateFlatList(), id: views[views.length - 1].id + 1 }, { element: dateFlatList(), id: views[views.length - 1].id + 2 }, { element: dateFlatList(), id: views[views.length - 1].id + 3 }, { element: dateFlatList(), id: views[views.length - 1].id + 4 })
-            newViews.shift()
-            newViews.shift()
-            newViews.shift()
-            newViews.shift()
+            // newViews.push({ element: dateFlatList(), id: views[views.length - 1].id + 1 }, { element: dateFlatList(), id: views[views.length - 1].id + 2 }, { element: dateFlatList(), id: views[views.length - 1].id + 3 }, { element: dateFlatList(), id: views[views.length - 1].id + 4 })
+            // newViews.shift()
+            // newViews.shift()
+            // newViews.shift()
+            // newViews.shift()
             gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
             setViews(newViews)
 
         } else if (index == views[0].id) {
             console.log("=====ここが先頭です")
             const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.unshift({ element: dateFlatList(), id: views[0].id - 1 }, { element: dateFlatList(), id: views[1].id - 1 }, { element: dateFlatList(), id: views[2].id - 1 }, { element: dateFlatList(), id: views[3].id - 1 });
-            newViews.pop();
-            newViews.pop();
-            newViews.pop();
-            newViews.pop();
+            // newViews.unshift({ element: dateFlatList(), id: views[0].id - 1 }, { element: dateFlatList(), id: views[1].id - 1 }, { element: dateFlatList(), id: views[2].id - 1 }, { element: dateFlatList(), id: views[3].id - 1 });
+            // newViews.pop();
+            // newViews.pop();
+            // newViews.pop();
+            // newViews.pop();
             gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
             setViews(newViews)
         }
@@ -128,7 +163,10 @@
                     ref={timeRef}
                     data={times}
                     style = {styles.timeContainer}
-                    keyExtractor={(_,index) => `${index}`}
+                    keyExtractor={(_, index) => `${index}`}
+                    onLayout={(e) =>
+                        console.log()
+                    }
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -145,6 +183,9 @@
                     decelerationRate={0.6}
                     horizontal
                     initialScrollIndex={4}
+                    onLayout={(e) =>
+                        console.log()
+                    }
                     onScrollEndDrag={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
