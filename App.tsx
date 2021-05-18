@@ -32,7 +32,7 @@
     },
     ]);
 
-    const horizontalFlatlistRef = React.useRef<FlatList>(null);
+    const gridtRef = React.useRef<FlatList>(null);
     const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
 
@@ -102,7 +102,7 @@
             newViews.shift()
             newViews.shift()
             newViews.shift()
-            horizontalFlatlistRef.current?.scrollToIndex({ animated: false, index: 4 })
+            gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
             setViews(newViews)
 
         } else if (index == views[0].id) {
@@ -113,7 +113,7 @@
             newViews.pop();
             newViews.pop();
             newViews.pop();
-            horizontalFlatlistRef.current?.scrollToIndex({ animated: false, index: 4 })
+            gridtRef.current?.scrollToIndex({ animated: false, index: 4 })
             setViews(newViews)
         }
     }
@@ -138,7 +138,7 @@
 
                 {/* スケジュールのグリッド */}
                 <FlatList
-                    ref = {horizontalFlatlistRef}
+                    ref = {gridtRef}
                     snapToInterval={DATE_WIDTH}
                     viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     data={views}
