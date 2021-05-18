@@ -1,12 +1,12 @@
     import { StatusBar } from 'expo-status-bar';
     import React from 'react';
-    import { StyleSheet, Text, View ,FlatList ,ViewToken ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent} from 'react-native';
+    import { StyleSheet, Text, View ,FlatList ,ViewToken ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
 
     export default function App() {
 
-    const times = ['10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00','10:00']
+    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45',,'12:00','13:15','13:30','13:45',]
     const date= [0]
-    for (let index = 1; index <= 200; index++) {
+    for (let index = 1; index <= 160; index++) {
         date.push(index)
     }
 
@@ -33,6 +33,7 @@
     ]);
 
     const horizontalFlatlistRef = React.useRef<FlatList>(null);
+    const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
 
     const dateFlatList = (color? : string) => {
@@ -61,10 +62,22 @@
                 </View>
                 
                 <FlatList
+                    ref={dateRef}
                     data={date}
                     style={styles.dateFlatList}
                     numColumns={7}
-                    keyExtractor={(_,index) => `${index}`}
+                    keyExtractor={(_, index) => `${index}`}
+                    scrollEventThrottle={1}
+                    onScroll={(e) => {
+                        timeRef.current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                        dateRef.current?.scrollToOffset({
+                            offset:e.nativeEvent.contentOffset.y,
+                            animated: false,
+                        });
+                    }}
                     renderItem={(item) => {
                     return (
                         <View style={[styles.grid,{backgroundColor: color}]}>
@@ -132,7 +145,6 @@
                     decelerationRate={0.6}
                     horizontal
                     initialScrollIndex={4}
-                    scrollEventThrottle={1}
                     onScrollEndDrag={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
