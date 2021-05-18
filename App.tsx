@@ -57,6 +57,7 @@
                     numColumns={28}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
+                    onScrollToIndexFailed={() => console.log("error")}
                     onScroll={(e) => {
                         timeRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
@@ -94,6 +95,7 @@
                     style = {styles.timeContainer}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
+                    onScrollToIndexFailed={() => console.log("error")}
                     onScroll={(e) => {
                         dateRef.current?.scrollToOffset({
                             offset:e.nativeEvent.contentOffset.y,
@@ -114,6 +116,7 @@
                     snapToInterval={DATE_WIDTH}
                     viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     decelerationRate={0.6}
+                    onScrollToIndexFailed={() => console.log("error")}
                     horizontal
                     onScrollEndDrag={(item) => onScrollEndDrag(item)}
                     keyExtractor={(_,index) => `${index}`}
