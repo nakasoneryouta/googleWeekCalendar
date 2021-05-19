@@ -32,6 +32,18 @@
     const gridtRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
     const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
+    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        timeRef.current?.scrollToOffset({
+            offset:event.nativeEvent.contentOffset.y,
+            animated: false,
+        });
+        for (let num = 0; num < 8; num++) {
+            dateRef[num].current?.scrollToOffset({
+            offset:event.nativeEvent.contentOffset.y,
+            animated: false,
+        });
+        }
+    }
 
     const dateFlatList = (index: number,color? : string) => {
         return (
@@ -66,18 +78,7 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll={(e) => {
-                        timeRef.current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        for (let num = 0; num < 8; num++) {
-                            dateRef[num].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        }
-                    }}
+                    onScroll={(event) => {onScroll(event)}}
                     renderItem={(item) => {
                     return (
                         <View style={[styles.grid,{backgroundColor: color}]}>
@@ -149,6 +150,7 @@
                     style = {styles.timeContainer}
                     keyExtractor={(_, index) => `${index}`}
                     onScrollToIndexFailed={() => console.log("error")}
+                    onScroll = {(event) => onScroll(event)}
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -161,6 +163,7 @@
                     ref = {gridtRef}
                     snapToInterval={DATE_WIDTH}
                     // viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                    style = {styles.gridFlatList}
                     data={views}
                     decelerationRate={0.6}
                     horizontal
@@ -185,7 +188,7 @@
     const TIME_WIDTH = Dimensions.get('screen').width * (375 - 290) / 375;
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
-    const GRID_WIDTH = Dimensions.get('screen').width * 44 / 375
+    const GRID_WIDTH = DATE_WIDTH / 7;
     const GRID_CONTAINER_HEIGHT = Dimensions.get('screen').height * 668 / 812;
 
     const styles = StyleSheet.create({
@@ -254,6 +257,9 @@
     },
     dateText: {
         color: 'black'
+    },
+    gridFlatList:{
+        width: DATE_WIDTH,
     },
     grid: {
         height: GRID_HEIGHT,
