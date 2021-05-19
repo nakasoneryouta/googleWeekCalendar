@@ -168,7 +168,7 @@
                     decelerationRate={0.6}
                     horizontal
                     initialScrollIndex={4}
-                    scrollEventThrottle={1500}
+                    scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
                     snapToEnd={true}
                     indicatorStyle={"black"}
