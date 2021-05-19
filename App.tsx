@@ -6,6 +6,7 @@
 
     //最初のデータ定義部分
     const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','12:00','13:15','13:30',]
+    const weeks = ['月','火','水','木','金','土','日']
     const date:number[] = []
     const grid:number[]= []
     for (let index = 1; index <= 600; index++) {
@@ -47,6 +48,7 @@
                         )
                     })}
                 </View>
+
                 <FlatList
                     ref={dateRef[index]}
                     data={grid}
@@ -109,6 +111,15 @@
     return (
         <View style={styles.container}>
 
+            {/* 曜日 */}
+            <View style={styles.weekContainer}>
+                {weeks.map((item) => {
+                    return (
+                        <View style={styles.weekTextContainer}><Text style={styles.dateText}>{item}</Text></View>
+                    )
+                })}
+            </View>
+
             <View style={styles.gridContainer}>
 
                 {/* 15分単位の時間 */}
@@ -130,7 +141,8 @@
                 {/* ３ヶ月分のスケジュールグリッド */}
                 <FlatList
                     data={views}
-                    ref = {gridRef}
+                    ref={gridRef}
+                    style = {styles.gridFlatList}
                     snapToInterval={DATE_WIDTH}
                     decelerationRate={0.6}
                     onScrollToIndexFailed={() => console.log("error")}
@@ -149,25 +161,28 @@
     }
 
     const DATE_WIDTH = Dimensions.get('screen').width * 308 / 375;
-    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 290) / 375;
+    const TIME_WIDTH = Dimensions.get('screen').width * (375 - 308) / 375;
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
-    const GRID_WIDTH = Dimensions.get('screen').width * 44 / 375
+    const GRID_WIDTH = DATE_WIDTH / 7
     const GRID_CONTAINER_HEIGHT = Dimensions.get('screen').height * 668 / 812;
 
     const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'center',
         marginTop: 50,
+        
     },
     weekContainer: {
         height: WEEK_HEIGHT,
         width: DATE_WIDTH,
         backgroundColor: 'blue',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderColor: 'black',
+        borderWidth: 1,
     },
     weekTextContainer: {
         height: WEEK_HEIGHT,
@@ -194,7 +209,7 @@
         marginTop: GRID_HEIGHT,
         width: TIME_WIDTH,
         height: GRID_CONTAINER_HEIGHT,
-        backgroundColor: 'green'
+        backgroundColor: 'green',
     },
     timeTextContainer: {
         backgroundColor: 'pink',
@@ -208,7 +223,7 @@
         color: 'black'
     },
     dateContainer: {
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     dateTextContainer: {
         height: GRID_HEIGHT,
@@ -221,6 +236,9 @@
     },
     dateText: {
         color: 'black'
+    },
+    gridFlatList: {
+        width: DATE_WIDTH,
     },
     grid: {
         height: GRID_HEIGHT,
