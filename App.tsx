@@ -1,4 +1,3 @@
-    import { StatusBar } from 'expo-status-bar';
     import React from 'react';
     import { StyleSheet, Text, View ,FlatList ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
 
@@ -72,7 +71,7 @@
 
     //初期設定
     //３ヶ月分のスケジュールグリッドを定義
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1,'white'),id: 1},{element: dateFlatList(2),id: 2}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2,'white'),id: 2}])
     
     //スケジュールグリッドの横スクロールの処理
     const onMomentumScrollEnd = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -86,7 +85,8 @@
             newViews.push({ element: dateFlatList(views[2].id + 1), id: views[views.length - 1].id + 1 })
             newViews.shift()
             setViews(newViews)
-            gridRef.current?.scrollToIndex({ animated: false, index: 1 })
+            // gridRef.current?.scrollToIndex({ animated: false, index: 1 })
+            gridRef.current?.scrollToOffset({animated: false, offset: item.nativeEvent.contentOffset.x - DATE_WIDTH * 3 })
             console.log("末端に到達しました")
             console.log("末端のid========>", newViews[2].id)
             console.log("先頭のid========>",newViews[0].id)
