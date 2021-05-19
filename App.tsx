@@ -1,45 +1,40 @@
     import { StatusBar } from 'expo-status-bar';
     import React from 'react';
-    import { StyleSheet, Text, View ,FlatList ,ViewToken ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
+    import { StyleSheet, Text, View ,FlatList ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
 
     export default function App() {
 
+    //最初のデータ定義部分
     const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','12:00','13:15','13:30',]
-    const date = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
-    const grid= [0]
+    const date:number[] = []
+    const grid:number[]= []
     for (let index = 1; index <= 600; index++) {
         grid.push(index)
     }
-
-    // const [index, setIndex] = React.useState(0)
-    // const handleViewableItemsChanged = (info: {
-    //     viewableItems: ViewToken[];
-    //     changed: ViewToken[];
-    // }) => {
-    // if (info.viewableItems.length > 0 && info.viewableItems[0].item) {
-    //     setIndex(info.viewableItems[0].item.id);
-    //     console.log("========",info.viewableItems[0].item.id)
-    // }
-    // };
-
-    // const viewabilityConfigCallbackPairs = React.useRef([
-    // {
-    //     viewabilityConfig: {
-    //     minimumViewTime: 0,
-    //     viewAreaCoveragePercentThreshold: 0,
-    //     waitForInteraction: true,
-    //     },
-    //     onViewableItemsChanged: handleViewableItemsChanged,
-    // },
-    // ]);
+    for (let index = 1; index <= 28; index++) {
+        date.push(index)
+    }
 
     const gridRef = React.useRef<FlatList>(null);
-    // const dateRef = React.useRef<FlatList>(null);
     const timeRef = React.useRef<FlatList>(null);
-    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
+    const dateRef = [React.useRef<FlatList>(null),React.useRef<FlatList>(null),React.useRef<FlatList>(null)]
     
+    //timeとスケジュールのグリッドを合わせる部分
+    const onScroll = (event:NativeSyntheticEvent<NativeScrollEvent>) => {
+        timeRef.current?.scrollToOffset({
+            offset:event.nativeEvent.contentOffset.y,
+            animated: false,
+        });
+        for (let index = 0; index < 3; index++) {
+            dateRef[index].current?.scrollToOffset({
+            offset:event.nativeEvent.contentOffset.y,
+            animated: false,
+        });
+        }
+    }
 
 
+    // １ヶ月分のスケジュールグリッド
     const dateFlatList = (index: number,color? : string) => {
         return (
             <View>
@@ -56,22 +51,11 @@
                     ref={dateRef[index]}
                     data={grid}
                     style={styles.dateFlatList}
-                    numColumns={7*4}
+                    numColumns={7 * 4}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll={(e) => {
-                        timeRef.current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        for (let index = 0; index < 3; index++) {
-                            dateRef[index].current?.scrollToOffset({
-                            offset:e.nativeEvent.contentOffset.y,
-                            animated: false,
-                        });
-                        }
-                    }}
+                    onScroll = {(event) => onScroll(event)}
                     renderItem={(item) => {
                     return (
                         <View style={[styles.grid,{backgroundColor: color}]}>
@@ -84,13 +68,41 @@
         )
     }
 
-    //初期カレンダーのView
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2}])
-    const onScrollEndDrag = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
-        console.log(Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH))
-        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 0){
-            // gridRef.current?.scrollToIndex({ animated: false, index: 0 })
+    //初期設定
+    //３ヶ月分のスケジュールグリッドを定義
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1,'white'),id: 1},{element: dateFlatList(2),id: 2}])
+    
+    //スケジュールグリッドの横スクロールの処理
+    const onMomentumScrollEnd = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
+
+        //スケジュールのグリッドの末端を検知
+        //末端に１ヶ月分のスケジュールグリッドを追加
+        //先頭の１ヶ月分のスケジュールグリッドを削除
+        //Viewを中央に再配置
+        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 11) {
+            const newViews: {element: JSX.Element,id: number}[] = [...views];
+            newViews.push({ element: dateFlatList(views[2].id + 1), id: views[views.length - 1].id + 1 })
+            newViews.shift()
+            setViews(newViews)
+            gridRef.current?.scrollToIndex({ animated: false, index: 1 })
+            console.log("末端に到達しました")
+            console.log("末端のid========>", newViews[2].id)
+            console.log("先頭のid========>",newViews[0].id)
+
+        }
+        //スケジュールのグリッドの先頭を検知
+        //末端に１ヶ月分のスケジュールグリッドを削除
+        //先頭の１ヶ月分のスケジュールグリッドを追加
+        //Viewを中央に再配置
+        else if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 0) {
+            const newViews: {element: JSX.Element,id: number}[] = [...views];
+            newViews.push({ element: dateFlatList(views[0].id - 1), id: views[0].id - 1 })
+            newViews.shift()
+            setViews(newViews)
+            gridRef.current?.scrollToIndex({ animated: false, index: 1 })
             console.log("先頭に到達しました")
+            console.log("末端のid========>", newViews[2].id)
+            console.log("先頭のid========>",newViews[0].id)
         }
     }
 
@@ -107,12 +119,7 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
-                    // onScroll={(e) => {
-                    //     dateRef.current?.scrollToOffset({
-                    //         offset:e.nativeEvent.contentOffset.y,
-                    //         animated: false,
-                    //     });
-                    // }}
+                    onScroll = {(event) => onScroll(event)}
                     renderItem={(item) => {
                         return (
                             <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
@@ -120,17 +127,16 @@
                     }}
                 />
 
-                {/* スケジュールのグリッド */}
+                {/* ３ヶ月分のスケジュールグリッド */}
                 <FlatList
                     data={views}
                     ref = {gridRef}
                     snapToInterval={DATE_WIDTH}
-                    // viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                     decelerationRate={0.6}
                     onScrollToIndexFailed={() => console.log("error")}
                     horizontal
                     initialScrollIndex={1}
-                    onMomentumScrollEnd={(item) => onScrollEndDrag(item)}
+                    onMomentumScrollEnd={(item) => onMomentumScrollEnd(item)}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
                         return (<>{item.item.element}</>)
