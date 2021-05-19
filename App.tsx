@@ -6,13 +6,9 @@
     export default function App() {
 
     //最初のデータ定義部分
-    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00',]
+    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','13:00','13:15']
     const weeks = ['月','火','水','木','金','土','日']
     const date:number[] = []
-    const grid:number[]= []
-    for (let index = 1; index <= 273; index++) {
-        grid.push(index)
-    }
     for (let index = 1; index <= 7; index++) {
         date.push(index)
     }
@@ -52,19 +48,23 @@
 
                 <FlatList
                     ref={dateRef[index]}
-                    data={grid}
+                    data={date}
                     style={styles.dateFlatList}
                     numColumns={7}
                     keyExtractor={(_, index) => `${index}`}
-                    scrollEventThrottle={1}
+                    scrollEventThrottle={16}
                     onScrollToIndexFailed={() => console.log("error")}
                     onScroll={(event) =>
                         onScroll(event)
                     }
                     renderItem={(item) => {
                     return (
-                        <View style={[styles.grid,{backgroundColor: color}]}>
-                            <Text>{item.item}</Text>
+                        <View style={[styles.gridContainer, { backgroundColor: color }]}>
+                            {times.map(() => {
+                                return (
+                                    <View style = {styles.gridTextContainer}><Text>{item.item}</Text></View>
+                                )
+                            })}
                         </View>
                     )
                     }}
@@ -126,7 +126,7 @@
                 })}
             </View>
 
-            <View style={styles.gridContainer}>
+            <View style={styles.bottomContainer}>
 
                 {/* 15分単位の時間 */}
                 <FlatList
@@ -134,7 +134,7 @@
                     data={times}
                     style = {styles.timeContainer}
                     keyExtractor={(_, index) => `${index}`}
-                    scrollEventThrottle={1}
+                    scrollEventThrottle={16}
                     onScrollToIndexFailed={() => console.log("error")}
                     onScroll = {(event) => onScroll(event)}
                     renderItem={(item) => {
@@ -210,7 +210,7 @@
         borderWidth: 1,
         borderColor: 'black',
     },
-    gridContainer: {
+    bottomContainer: {
         flexDirection: 'row',
     },
     timeContainer: {
@@ -247,6 +247,16 @@
     },
     gridFlatList: {
         width: DATE_WIDTH,
+    },
+    gridContainer: {
+        width: GRID_WIDTH,
+    },
+    gridTextContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: GRID_HEIGHT,
+        borderColor: 'black',
+        borderWidth: 1,
     },
     grid: {
         height: GRID_HEIGHT,
