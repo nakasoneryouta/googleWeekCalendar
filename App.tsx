@@ -1,10 +1,12 @@
     import React from 'react';
     import { StyleSheet, Text, View ,FlatList ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
+    
+    const cell = 4
 
     export default function App() {
 
     //最初のデータ定義部分
-    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','12:00','13:15','13:30',]
+    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','13:00','13:15']
     const weeks = ['月','火','水','木','金','土','日']
     const date:number[] = []
     const grid:number[]= []
@@ -25,11 +27,11 @@
             offset:event.nativeEvent.contentOffset.y,
             animated: false,
         });
-        for (let index = 0; index < 3; index++) {
-            dateRef[index].current?.scrollToOffset({
-            offset:event.nativeEvent.contentOffset.y,
-            animated: false,
-        });
+            for (let index = 0; index < 3; index++) {
+                dateRef[index].current?.scrollToOffset({
+                offset:event.nativeEvent.contentOffset.y,
+                animated: false,
+            });
         }
     }
 
@@ -52,11 +54,13 @@
                     ref={dateRef[index]}
                     data={grid}
                     style={styles.dateFlatList}
-                    numColumns={7 * 4}
+                    numColumns={7 * cell}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll = {(event) => onScroll(event)}
+                    onScroll={(event) =>
+                        onScroll(event)
+                    }
                     renderItem={(item) => {
                     return (
                         <View style={[styles.grid,{backgroundColor: color}]}>
@@ -81,13 +85,13 @@
         //先頭の１ヶ月分のスケジュールグリッドを削除
         //Viewを中央に再配置
         if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 11) {
-            const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.push({ element: dateFlatList(views[2].id + 1), id: views[views.length - 1].id + 1 })
+            const newViews: { element: JSX.Element, id: number }[] = [...views];
             newViews.shift()
+            newViews.push({ element: dateFlatList(2), id: views[views.length - 1].id + 1 })
+            newViews[1] = { element: dateFlatList(1), id: views[1].id }
+            newViews[0] = { element: dateFlatList(0), id: views[0].id }
             setViews(newViews)
-            // gridRef.current?.scrollToIndex({ animated: false, index: 1 })
             gridRef.current?.scrollToOffset({animated: false, offset: item.nativeEvent.contentOffset.x - DATE_WIDTH * 3 })
-            console.log("末端に到達しました")
             console.log("末端のid========>", newViews[2].id)
             console.log("先頭のid========>",newViews[0].id)
 
@@ -97,12 +101,13 @@
         //先頭の１ヶ月分のスケジュールグリッドを追加
         //Viewを中央に再配置
         else if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 0) {
-            const newViews: {element: JSX.Element,id: number}[] = [...views];
-            newViews.push({ element: dateFlatList(views[0].id - 1), id: views[0].id - 1 })
-            newViews.shift()
+            const newViews: { element: JSX.Element, id: number }[] = [...views];
+            newViews.pop()
+            newViews.unshift({ element: dateFlatList(0), id: views[0].id - 1 })
+            newViews[2] = { element: dateFlatList(2), id: views[2].id }
+            newViews[1] = { element: dateFlatList(1), id: views[1].id }
             setViews(newViews)
             gridRef.current?.scrollToIndex({ animated: false, index: 1 })
-            console.log("先頭に到達しました")
             console.log("末端のid========>", newViews[2].id)
             console.log("先頭のid========>",newViews[0].id)
         }
@@ -149,6 +154,8 @@
                     horizontal
                     initialScrollIndex={1}
                     onMomentumScrollEnd={(item) => onMomentumScrollEnd(item)}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                     keyExtractor={(_,index) => `${index}`}
                     renderItem={(item) => {
                         return (<>{item.item.element}</>)
@@ -196,7 +203,7 @@
         color: 'black',
     },
     dateFlatList: {
-        width: DATE_WIDTH * 4,
+        width: DATE_WIDTH * cell,
         height: GRID_CONTAINER_HEIGHT,
         backgroundColor: 'yellow',
         borderWidth: 1,
