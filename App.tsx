@@ -10,10 +10,10 @@
     const weeks = ['月','火','水','木','金','土','日']
     const date:number[] = []
     const grid:number[]= []
-    for (let index = 1; index <= 600; index++) {
+    for (let index = 1; index <= 154; index++) {
         grid.push(index)
     }
-    for (let index = 1; index <= 28; index++) {
+    for (let index = 1; index <= 7; index++) {
         date.push(index)
     }
 
@@ -54,7 +54,7 @@
                     ref={dateRef[index]}
                     data={grid}
                     style={styles.dateFlatList}
-                    numColumns={7 * cell}
+                    numColumns={7}
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={1}
                     onScrollToIndexFailed={() => console.log("error")}
@@ -84,14 +84,15 @@
         //末端に１ヶ月分のスケジュールグリッドを追加
         //先頭の１ヶ月分のスケジュールグリッドを削除
         //Viewを中央に再配置
-        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 11) {
+        if (Math.round(item.nativeEvent.contentOffset.x / DATE_WIDTH) == 2) {
             const newViews: { element: JSX.Element, id: number }[] = [...views];
             newViews.shift()
             newViews.push({ element: dateFlatList(2), id: views[views.length - 1].id + 1 })
             newViews[1] = { element: dateFlatList(1), id: views[1].id }
             newViews[0] = { element: dateFlatList(0), id: views[0].id }
             setViews(newViews)
-            gridRef.current?.scrollToOffset({animated: false, offset: item.nativeEvent.contentOffset.x - DATE_WIDTH * 3 })
+            gridRef.current?.scrollToOffset({ animated: false, offset: item.nativeEvent.contentOffset.x - DATE_WIDTH * 3 })
+            gridRef.current?.scrollToIndex({animated: false,index: 1})
             console.log("末端のid========>", newViews[2].id)
             console.log("先頭のid========>",newViews[0].id)
 
@@ -203,7 +204,7 @@
         color: 'black',
     },
     dateFlatList: {
-        width: DATE_WIDTH * cell,
+        width: DATE_WIDTH,
         height: GRID_CONTAINER_HEIGHT,
         backgroundColor: 'yellow',
         borderWidth: 1,
