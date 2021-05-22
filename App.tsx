@@ -1,12 +1,12 @@
     import React from 'react';
-    import { StyleSheet, Text, View ,FlatList ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent } from 'react-native';
+    import { StyleSheet, Text, View ,FlatList ,Dimensions ,NativeSyntheticEvent ,NativeScrollEvent, TouchableOpacity } from 'react-native';
     
     const cell = 4
 
     export default function App() {
 
     //最初のデータ定義部分
-    const times = ['8:00','8:15','8:30','8:45','9:00','9:15','9:30','9:45','10:00','10:15','10:30','10:45','11:00','11:15','11:30','11:45','12:00','12:15','12:30','12:45','13:00','13:15']
+    const times = ['8:00','8:30','9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','20:00','8:00','8:30','9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','20:00',]
     const weeks = ['月','火','水','木','金','土','日']
     const date:number[] = []
     for (let index = 1; index <= 7; index++) {
@@ -54,15 +54,17 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={16}
                     onScrollToIndexFailed={() => console.log("error")}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                     onScroll={(event) =>
                         onScroll(event)
                     }
-                    renderItem={(item) => {
+                    renderItem={({item}) => {
                     return (
                         <View style={[styles.gridContainer, { backgroundColor: color }]}>
-                            {times.map(() => {
+                            {times.map((_,index) => {
                                 return (
-                                    <View style = {styles.gridTextContainer}><Text>{item.item}</Text></View>
+                                    <TouchableOpacity style = {[styles.gridTextContainer,index % 2 == 0 ? styles.gridOdd:{}]}><Text>{item.item}</Text></TouchableOpacity>
                                 )
                             })}
                         </View>
@@ -75,7 +77,7 @@
 
     //初期設定
     //３ヶ月分のスケジュールグリッドを定義
-    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2,'white'),id: 2}])
+    const [views, setViews] = React.useState<{element: JSX.Element,id: number}[]>([{element: dateFlatList(0),id: 0},{element: dateFlatList(1),id: 1},{element: dateFlatList(2),id: 2}])
     
     //スケジュールグリッドの横スクロールの処理
     const onMomentumScrollEnd = (item:NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -136,10 +138,12 @@
                     keyExtractor={(_, index) => `${index}`}
                     scrollEventThrottle={16}
                     onScrollToIndexFailed={() => console.log("error")}
-                    onScroll = {(event) => onScroll(event)}
-                    renderItem={(item) => {
+                    onScroll={(event) => onScroll(event)}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item,index}) => {
                         return (
-                            <View style = {styles.timeTextContainer}><Text style={styles.timeText}>{item.item}</Text></View>
+                            <View style = {[styles.timeTextContainer,index % 2 == 0 ? styles.gridOdd : {}]}><Text style={styles.timeText}>{item}</Text></View>
                         )
                     }}
                 />
@@ -173,32 +177,26 @@
     const WEEK_HEIGHT = Dimensions.get('screen').height * 32 / 812;
     const GRID_HEIGHT = Dimensions.get('screen').height * 44 / 812;
     const GRID_WIDTH = DATE_WIDTH / 7
-    const GRID_CONTAINER_HEIGHT = Dimensions.get('screen').height * 668 / 812;
+    const GRID_CONTAINER_HEIGHT = Dimensions.get('screen').height * 620 / 812;
 
     const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#E6E8EA',
         alignItems: 'flex-end',
         justifyContent: 'center',
-        marginTop: 50,
-        
+        paddingTop: 50,
     },
     weekContainer: {
         height: WEEK_HEIGHT,
         width: DATE_WIDTH,
-        backgroundColor: 'blue',
         flexDirection: 'row',
-        borderColor: 'black',
-        borderWidth: 1,
     },
     weekTextContainer: {
         height: WEEK_HEIGHT,
         width: GRID_WIDTH,
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: 'black',
     },
     weekText: {
         color: 'black',
@@ -206,41 +204,41 @@
     dateFlatList: {
         width: DATE_WIDTH,
         height: GRID_CONTAINER_HEIGHT,
-        backgroundColor: 'yellow',
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#D8DDE3',
     },
     bottomContainer: {
         flexDirection: 'row',
     },
     timeContainer: {
-        marginTop: GRID_HEIGHT,
+        marginTop: GRID_HEIGHT + 2,
         width: TIME_WIDTH,
         height: GRID_CONTAINER_HEIGHT,
-        backgroundColor: 'green',
     },
     timeTextContainer: {
-        backgroundColor: 'pink',
-        alignItems: 'center',
+        alignItems: 'flex-end',
+        paddingRight: 10,
         justifyContent: 'center',
         height: GRID_HEIGHT,
-        borderColor: 'black',
-        borderWidth: 1,
+        borderBottomColor: '#D8DDE3',
+        borderBottomWidth: 2,
     },
     timeText: {
         color: 'black'
     },
     dateContainer: {
         flexDirection: 'row',
+        borderLeftWidth: 1,
+        borderLeftColor: '#D8DDE3'
     },
     dateTextContainer: {
         height: GRID_HEIGHT,
         width: GRID_WIDTH,
-        backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: 'black',
+        borderBottomWidth: 0,
+        borderColor: '#D8DDE3',
     },
     dateText: {
         color: 'black'
@@ -255,15 +253,17 @@
         alignItems: 'center',
         justifyContent: 'center',
         height: GRID_HEIGHT,
-        borderColor: 'black',
+        borderColor: '#D8DDE3',
         borderWidth: 1,
+    },
+    gridOdd:{
+        backgroundColor: '#D8DDE3'
     },
     grid: {
         height: GRID_HEIGHT,
         width: GRID_WIDTH,
-        backgroundColor: 'green',
         borderWidth: 1,
         borderColor: 'black',
-        flexDirection: 'row'
+        flexDirection: 'row',
     }
     });
